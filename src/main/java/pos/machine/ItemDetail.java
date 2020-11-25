@@ -1,28 +1,17 @@
 package pos.machine;
 
-public class ItemDetail {
-    private final String name;
+public class ItemDetail extends ItemInfo{
     private final int quantity;
-    private final int price;
     private final int subTotal;
 
-    public ItemDetail(String name, int quantity, int price) {
-        this.name = name;
+    public ItemDetail(String barcode, String name, int price, int quantity) {
+        super(barcode,name,price);
         this.quantity = quantity;
-        this.price = price;
         this.subTotal = quantity*price;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getQuantity() {
         return quantity;
-    }
-
-    public int getPrice() {
-        return price;
     }
 
     public int getSubTotal() {

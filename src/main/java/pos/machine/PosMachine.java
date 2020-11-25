@@ -43,7 +43,7 @@ public class PosMachine {
         for(String uniqueBarcode : uniqueBarcodes){
             long occurences = loadBarcodes.stream().filter(item -> item.equals(uniqueBarcode)).count();
             ItemInfo itemInfo = fetchItemInfoFromDatabase(uniqueBarcode);
-            ItemDetail itemDetail = new ItemDetail(itemInfo.getName(), (int)occurences, itemInfo.getPrice());
+            ItemDetail itemDetail = new ItemDetail(uniqueBarcode,itemInfo.getName(),itemInfo.getPrice(),(int)occurences);
             itemDetails.add(itemDetail);
         }
         return itemDetails;
