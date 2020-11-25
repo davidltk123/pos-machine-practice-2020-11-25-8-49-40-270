@@ -2,7 +2,6 @@ package pos.machine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class PosMachine {
@@ -27,7 +26,7 @@ public class PosMachine {
 
     private String generateTotal(List<ItemDetail> itemDetails) {
         int total = itemDetails.stream().mapToInt(item -> item.getSubTotal()).reduce(0,Integer::sum);
-        return "Total: "+total+" (yuan)\n";
+        return String.format("Total: %d (yuan)\n",total);
     }
 
     private String generateReceiptByItem(ItemDetail itemDetail) {
@@ -42,9 +41,9 @@ public class PosMachine {
 
         //calculate occurence and form itemDetails object
         for(String uniqueBarcode : uniqueBarcodes){
-            int occurences = Collections.frequency(loadBarcodes,uniqueBarcode);
+            long occurences = loadBarcodes.stream().filter(item -> item.equals(uniqueBarcode)).count();
             ItemInfo itemInfo = fetchItemInfoFromDatabase(uniqueBarcode);
-            ItemDetail itemDetail = new ItemDetail(itemInfo.getName(), occurences, itemInfo.getPrice());
+            ItemDetail itemDetail = new ItemDetail(itemInfo.getName(), (int)occurences, itemInfo.getPrice());
             itemDetails.add(itemDetail);
         }
         return itemDetails;
