@@ -25,7 +25,7 @@ public class PosMachine {
     }
 
     private String generateTotal(List<ItemDetail> itemDetails) {
-        int total = itemDetails.stream().mapToInt(item -> item.getSubTotal()).reduce(0,Integer::sum);
+        int total = itemDetails.stream().mapToInt(item -> item.getSubTotal()).sum();
         return String.format("Total: %d (yuan)\n",total);
     }
 
