@@ -18,7 +18,7 @@ public class ReceiptItem extends ItemInfo{
         return subTotal;
     }
 
-    public String generateReceipt() {
+    public String generateReceiptItem() {
         return String.format("Name: %s, Quantity: %d, Unit price: %d (yuan), Subtotal: %d (yuan)\n",this.getName(),this.getQuantity(),this.getPrice(),this.getSubTotal());
     }
 }
