@@ -6,47 +6,43 @@ import java.util.stream.Collectors;
 
 public class PosMachine {
     public String printReceipt(List<String> barcodes) {
-        List<ItemDetail> itemDetails = new ArrayList<>();
-        itemDetails = generateItemDetails(ItemDataLoader.loadBarcodes());
-        String receipt = generateReceipt(itemDetails);
+        List<ReceiptItem> receiptItems = new ArrayList<>();
+        receiptItems = generateItemDetails(ItemDataLoader.loadBarcodes());
+        String receipt = generateReceipt(receiptItems);
         return receipt;
     }
 
-    private String generateReceipt(List<ItemDetail> itemDetails) {
+    private String generateReceipt(List<ReceiptItem> receiptItems) {
         String receipt = "***<store earning no money>Receipt***\n";
-        for(ItemDetail itemDetail: itemDetails){
-            receipt += generateReceiptByItem(itemDetail);
+        for(ReceiptItem receiptItem: receiptItems){
+            receipt += receiptItem.generateReceipt();
         }
         receipt += "----------------------\n";
-        receipt += generateTotal(itemDetails);
+        receipt += generateTotal(receiptItems);
         receipt += "**********************";
 
         return receipt;
     }
 
-    private String generateTotal(List<ItemDetail> itemDetails) {
-        int total = itemDetails.stream().mapToInt(item -> item.getSubTotal()).sum();
+    private String generateTotal(List<ReceiptItem> receiptItems) {
+        int total = receiptItems.stream().mapToInt(item -> item.getSubTotal()).sum();
         return String.format("Total: %d (yuan)\n",total);
     }
 
-    private String generateReceiptByItem(ItemDetail itemDetail) {
-        return String.format("Name: %s, Quantity: %d, Unit price: %d (yuan), Subtotal: %d (yuan)\n",itemDetail.getName(),itemDetail.getQuantity(),itemDetail.getPrice(),itemDetail.getSubTotal());
-    }
-
-    private List<ItemDetail> generateItemDetails(List<String> loadBarcodes) {
-        List<ItemDetail> itemDetails = new ArrayList<>();
+    private List<ReceiptItem> generateItemDetails(List<String> loadBarcodes) {
+        List<ReceiptItem> receiptItems = new ArrayList<>();
 
         //create unique barcordes list
         List<String> uniqueBarcodes = loadBarcodes.stream().distinct().collect(Collectors.toList());
 
         //calculate occurence and form itemDetails object
         for(String uniqueBarcode : uniqueBarcodes){
-            long occurences = loadBarcodes.stream().filter(item -> item.equals(uniqueBarcode)).count();
+            long quantity = loadBarcodes.stream().filter(item -> item.equals(uniqueBarcode)).count();
             ItemInfo itemInfo = fetchItemInfoFromDatabase(uniqueBarcode);
-            ItemDetail itemDetail = new ItemDetail(uniqueBarcode,itemInfo.getName(),itemInfo.getPrice(),(int)occurences);
-            itemDetails.add(itemDetail);
+            ReceiptItem receiptItem = new ReceiptItem(uniqueBarcode,itemInfo.getName(),itemInfo.getPrice(),(int)quantity);
+            receiptItems.add(receiptItem);
         }
-        return itemDetails;
+        return receiptItems;
     }
 
     private ItemInfo fetchItemInfoFromDatabase(String loadBarcode) {
